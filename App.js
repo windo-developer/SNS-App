@@ -7,6 +7,9 @@ import * as Font from "expo-font";
 import { Asset } from "expo-asset";
 import LoggedOutNav from "./src/routes/LoggedOutNav";
 import { NavigationContainer } from "@react-navigation/native";
+import { Appearance, AppearanceProvider } from "react-native-appearance";
+import { ThemeProvider } from "styled-components";
+import theme from "./src/shared/styles/theme";
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -29,9 +32,16 @@ export default function App() {
       />
     );
   }
+  // const light = Appearance.getColorScheme() === "light";
+  // const subscription = Appearance.addChangeListener[({colorScheme})]
+
   return (
-    <NavigationContainer>
-      <LoggedOutNav />
-    </NavigationContainer>
+    <AppearanceProvider>
+      <ThemeProvider theme={theme}>
+        <NavigationContainer>
+          <LoggedOutNav />
+        </NavigationContainer>
+      </ThemeProvider>
+    </AppearanceProvider>
   );
 }
