@@ -9,6 +9,7 @@ const LoginLink = styled.Text`
   color: ${(props) => props.theme.colors.blue};
   font-weight: 600;
   margin-top: 10px;
+  text-align: center;
 `;
 
 export default function Welcome({ navigation }) {
