@@ -8,10 +8,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { Appearance, AppearanceProvider } from "react-native-appearance";
 import { ThemeProvider } from "styled-components";
 import theme from "./src/shared/styles/theme";
-import { ApolloProvider } from "@apollo/client";
-import client from "./src/core/apollo";
+import { ApolloProvider, useReactiveVar } from "@apollo/client";
+import client, { isLoggedInVar } from "./src/core/apollo";
+import LoggedInNav from "./src/routes/LoggedInNav";
 
 export default function App() {
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [loading, setLoading] = useState(true);
   const onFinish = () => {
     setLoading(false);
@@ -40,7 +42,7 @@ export default function App() {
       <AppearanceProvider>
         <ThemeProvider theme={theme}>
           <NavigationContainer>
-            <LoggedOutNav />
+            {isLoggedIn ? <LoggedInNav /> : <LoggedOutNav />}
           </NavigationContainer>
         </ThemeProvider>
       </AppearanceProvider>
