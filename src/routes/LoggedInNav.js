@@ -7,6 +7,8 @@ import Search from "../screens/Search";
 import Notifications from "../screens/Notifications";
 import Profile from "../screens/Profile";
 import { View } from "react-native";
+import MyProfile from "../screens/MyProfile";
+import SharedNav from "./SharedNav";
 
 const Tab = createBottomTabNavigator();
 
@@ -18,13 +20,12 @@ export default function LoggedInNav() {
         showLabel: false,
         style: {
           backgroundColor: "black",
-          borderTopColor: "rgba(255,255,255,0.3)",
+          borderTopColor: "rgba(255, 255, 255, 0.2)",
         },
       }}
     >
       <Tab.Screen
         name="Feed"
-        component={Feed}
         options={{
           tabBarIcon: ({ focused, color, size }) => {
             return (
@@ -32,10 +33,11 @@ export default function LoggedInNav() {
             );
           },
         }}
-      />
+      >
+        {() => <SharedNav screenName="Feed" />}
+      </Tab.Screen>
       <Tab.Screen
         name="Search"
-        component={Search}
         options={{
           tabBarIcon: ({ focused, color, size }) => {
             return (
@@ -43,7 +45,9 @@ export default function LoggedInNav() {
             );
           },
         }}
-      />
+      >
+        {() => <SharedNav screenName="Search" />}
+      </Tab.Screen>
       <Tab.Screen
         name="Camera"
         component={View}
@@ -61,7 +65,6 @@ export default function LoggedInNav() {
       />
       <Tab.Screen
         name="Notifications"
-        component={Notifications}
         options={{
           tabBarIcon: ({ focused, color, size }) => {
             return (
@@ -73,10 +76,11 @@ export default function LoggedInNav() {
             );
           },
         }}
-      />
+      >
+        {() => <SharedNav screenName="Notifications" />}
+      </Tab.Screen>
       <Tab.Screen
-        name="Profile"
-        component={Profile}
+        name="MyProfile"
         options={{
           tabBarIcon: ({ focused, color, size }) => {
             return (
@@ -84,7 +88,9 @@ export default function LoggedInNav() {
             );
           },
         }}
-      />
+      >
+        {() => <SharedNav screenName="MyProfile" />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }

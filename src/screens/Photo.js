@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 
-export default function Search({ navigation }) {
+export default function Photo() {
   return (
     <View
       style={{
@@ -11,7 +11,7 @@ export default function Search({ navigation }) {
         justifyContent: "center",
       }}
     >
-      <Text style={{ color: "white" }}>Search</Text>
+      <Text style={{ color: "white" }}>Photo</Text>
     </View>
   );
 }
