@@ -6,6 +6,7 @@ import AuthButton from "../components/auth/AuthButton";
 
 import AuthLayout from "../components/auth/AuthLayout";
 import { TextInput } from "../components/auth/AuthShared";
+import { userLogin } from "../core/apollo";
 
 const LOGIN_MUTATION = gql`
   mutation login($username: String!, $password: String!) {
@@ -17,10 +18,25 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
-export default function Login({ navigation }) {
-  const { register, handleSubmit, setValue } = useForm();
+export default function Login({ route: { params } }) {
+  const { register, handleSubmit, setValue, watch } = useForm({
+    defaultValues: {
+      username: params?.username,
+      password: params?.password,
+    },
+  });
   const passwordRef = useRef();
-  const [loginMutation, { loading }] = useMutation(LOGIN_MUTATION);
+  const onCompleted = async (data) => {
+    const {
+      login: { ok, token },
+    } = data;
+    if (ok) {
+      await userLogin(token);
+    }
+  };
+  const [loginMutation, { loading }] = useMutation(LOGIN_MUTATION, {
+    onCompleted,
+  });
 
   const onNext = (nextOne) => {
     nextOne?.current?.focus();
@@ -47,9 +63,9 @@ export default function Login({ navigation }) {
   return (
     <AuthLayout>
       <TextInput
-        placeholder="Email"
+        value={watch("username")}
+        placeholder="Username"
         placeholderTextColor="gray"
-        keyboardType="email-address"
         returnKeyType="next"
         autoCapitalize="none"
         autoCorrect={false}
@@ -57,6 +73,7 @@ export default function Login({ navigation }) {
         onChangeText={(text) => setValue("username", text)}
       />
       <TextInput
+        value={watch("password")}
         ref={passwordRef}
         placeholder="Password"
         placeholderTextColor="gray"
@@ -67,7 +84,8 @@ export default function Login({ navigation }) {
       />
       <AuthButton
         text="Log in"
-        disabled={false}
+        loading={loading}
+        disabled={!watch("username") || !watch("password")}
         onPress={handleSubmit(onValid)}
       />
     </AuthLayout>

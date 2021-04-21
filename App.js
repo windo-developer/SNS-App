@@ -9,8 +9,9 @@ import { Appearance, AppearanceProvider } from "react-native-appearance";
 import { ThemeProvider } from "styled-components";
 import theme from "./src/shared/styles/theme";
 import { ApolloProvider, useReactiveVar } from "@apollo/client";
-import client, { isLoggedInVar } from "./src/core/apollo";
+import client, { isLoggedInVar, tokenVar } from "./src/core/apollo";
 import LoggedInNav from "./src/routes/LoggedInNav";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
@@ -18,13 +19,22 @@ export default function App() {
   const onFinish = () => {
     setLoading(false);
   };
-  const preload = () => {
+  const preloadAssets = () => {
     const fontsPreload = [Ionicons.font];
     const fontPromises = fontsPreload.map((font) => Font.loadAsync(font));
     const imagesPreload = [require("./assets/instagramlogo.png")];
     const imagesPromises = imagesPreload.map((image) => Asset.loadAsync(image));
     return Promise.all([...fontPromises, ...imagesPromises]);
   };
+  const preload = async () => {
+    const token = await AsyncStorage.getItem("token");
+    if (token) {
+      isLoggedInVar(true);
+      tokenVar(token);
+    }
+    return preloadAssets();
+  };
+
   if (loading) {
     return (
       <AppLoading
