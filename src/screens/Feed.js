@@ -1,8 +1,16 @@
 import { useQuery, gql } from "@apollo/client";
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  FlatList,
+} from "react-native";
+import Photo from "../components/Photo";
 import { userLogout } from "../core/apollo";
 import { COMMENT_FRAGMENT, PHOTO_FRAGMENT } from "../core/fragments";
+import ScreenLayout from "../shared/ScreenLayout";
 
 const FEED_QUERY = gql`
   query seeFeed {
@@ -25,20 +33,19 @@ const FEED_QUERY = gql`
 `;
 
 export default function Feed() {
-  const { data } = useQuery(FEED_QUERY);
-  console.log(data);
+  const { data, loading } = useQuery(FEED_QUERY);
+  const renderFeed = ({ item: photo }) => {
+    return <Photo {...photo} />;
+  };
   return (
-    <View
-      style={{
-        backgroundColor: "black",
-        flex: 1,
-        alignContent: "center",
-        justifyContent: "center",
-      }}
-    >
-      <TouchableOpacity onPress={() => userLogout()}>
-        <Text style={{ color: "white" }}>LOG OUT</Text>
-      </TouchableOpacity>
-    </View>
+    <ScreenLayout loading={loading}>
+      <FlatList
+        style={{ width: "100%" }}
+        showsVerticalScrollIndicator={false}
+        data={data?.seeFeed}
+        keyExtractor={(item) => "" + item.id}
+        renderItem={renderFeed}
+      />
+    </ScreenLayout>
   );
 }
