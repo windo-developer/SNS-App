@@ -1,11 +1,12 @@
 import { useQuery, gql } from "@apollo/client";
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
+  RefreshControl,
 } from "react-native";
 import Photo from "../components/Photo";
 import { userLogout } from "../core/apollo";
@@ -13,8 +14,8 @@ import { COMMENT_FRAGMENT, PHOTO_FRAGMENT } from "../core/fragments";
 import ScreenLayout from "../shared/ScreenLayout";
 
 const FEED_QUERY = gql`
-  query seeFeed {
-    seeFeed {
+  query seeFeed($offset: Int!) {
+    seeFeed(offset: $offset) {
       ...PhotoFragment
       user {
         username
@@ -33,10 +34,22 @@ const FEED_QUERY = gql`
 `;
 
 export default function Feed() {
-  const { data, loading } = useQuery(FEED_QUERY);
+  const { data, loading, refetch, fetchMore } = useQuery(FEED_QUERY, {
+    variables: {
+      offset: 0,
+    },
+  });
+  const [refreshing, setRefreshing] = useState(false);
+  const refresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
+
   const renderFeed = ({ item: photo }) => {
     return <Photo {...photo} />;
   };
+
   return (
     <ScreenLayout loading={loading}>
       <FlatList
@@ -45,6 +58,17 @@ export default function Feed() {
         data={data?.seeFeed}
         keyExtractor={(item) => "" + item.id}
         renderItem={renderFeed}
+        refreshing={refreshing}
+        onRefresh={refresh}
+        refreshControl={<RefreshControl tintColor="white" />}
+        onEndReached={() =>
+          fetchMore({
+            variables: {
+              offset: data?.seeFeed?.length,
+            },
+          })
+        }
+        onEndReachedThreshold={0.2}
       />
     </ScreenLayout>
   );

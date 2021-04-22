@@ -61,9 +61,11 @@ export default function Photo({
   const [imageHeight, setImageHeight] = useState(height - 500);
 
   useEffect(() => {
-    Image.getSize(file, (width, height) => {
-      setImageHeight(height / 4);
-    });
+    if (file) {
+      Image.getSize(file, (width, height) => {
+        setImageHeight(height / 4);
+      });
+    }
   }, [file]);
 
   return (
