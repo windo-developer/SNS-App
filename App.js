@@ -9,9 +9,10 @@ import { Appearance, AppearanceProvider } from "react-native-appearance";
 import { ThemeProvider } from "styled-components";
 import theme from "./src/shared/styles/theme";
 import { ApolloProvider, useReactiveVar } from "@apollo/client";
-import client, { isLoggedInVar, tokenVar } from "./src/core/apollo";
+import client, { isLoggedInVar, tokenVar, cache } from "./src/core/apollo";
 import LoggedInNav from "./src/routes/LoggedInNav";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AsyncStorageWrapper, persistCache } from "apollo3-cache-persist";
 
 export default function App() {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
@@ -32,6 +33,11 @@ export default function App() {
       isLoggedInVar(true);
       tokenVar(token);
     }
+    await persistCache({
+      cache,
+      storage: new AsyncStorageWrapper(AsyncStorage),
+      serialize: false,
+    });
     return preloadAssets();
   };
 

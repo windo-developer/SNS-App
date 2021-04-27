@@ -68,9 +68,16 @@ export default function Photo({
     }
   }, [file]);
 
+  const goToProfile = () => {
+    navigation.navigate("Profile", {
+      id: user.id,
+      username: user.username,
+    });
+  };
+
   return (
     <Container>
-      <Header onPress={() => navigation.navigate("Profile")}>
+      <Header onPress={goToProfile}>
         <UserAvatar source={{ uri: user.avatar }} resizeMode="cover" />
         <Username>{user.username}</Username>
       </Header>
@@ -92,11 +99,17 @@ export default function Photo({
             <Ionicons name={"chatbox-outline"} color="white" size={22} />
           </Action>
         </Actions>
-        <TouchableOpacity onPress={() => navigation.navigate("Likes")}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("Likes", {
+              photoId: id,
+            })
+          }
+        >
           <Likes>{likes === 1 ? "1 like" : `${likes} likes`}</Likes>
         </TouchableOpacity>
         <Caption>
-          <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+          <TouchableOpacity onPress={goToProfile}>
             <Username>{user.username}</Username>
           </TouchableOpacity>
           <CaptionText>{caption}</CaptionText>
